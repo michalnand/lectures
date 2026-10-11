@@ -1,0 +1,319 @@
+\documentclass[xcolor=dvipsnames]{beamer}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english,slovak]{babel}
+
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usetheme{Pittsburgh}
+\useoutertheme{shadow}
+
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+
+\usepackage[]{algorithm2e}
+\usepackage{listings}
+ \setbeamercovered{transparent}
+ \usepackage{cuted}
+\usepackage[export]{adjustbox}
+\usepackage{mathtools}
+
+\usepackage{lipsum}
+\usepackage{verbatim}
+\usepackage{transparent}
+\usepackage{framed}
+\usepackage{xcolor}
+
+\usepackage{multirow}
+\usepackage{colortbl}
+\usepackage{lmodern}
+
+\usepackage{movie15}
+\usepackage{media9}
+\usepackage{verbatim}
+
+\usepackage{animate}
+
+
+\usepackage{hyperref}
+
+\newcommand\Wider[2][3em]{%
+\makebox[\linewidth][c]{%
+  \begin{minipage}{\dimexpr\textwidth+#1\relax}
+  \raggedright#2
+  \end{minipage}%
+  }%
+}
+
+
+
+
+
+
+\iftrue
+
+\usetheme{Warsaw}
+
+\setbeamercolor{normal text}{fg=white,bg=black!90}
+\setbeamercolor{structure}{fg=white}
+
+\setbeamercolor{alerted text}{fg=red!85!black}
+
+\setbeamercolor{item projected}{use=item,fg=black,bg=item.fg!35}
+
+\setbeamercolor*{palette primary}{use=structure,fg=structure.fg}
+\setbeamercolor*{palette secondary}{use=structure,fg=structure.fg!95!black}
+\setbeamercolor*{palette tertiary}{use=structure,fg=structure.fg!90!black}
+\setbeamercolor*{palette quaternary}{use=structure,fg=structure.fg!95!black,bg=black!80}
+
+\setbeamercolor*{framesubtitle}{fg=white}
+
+\setbeamercolor*{block title}{parent=structure,bg=black!60}
+\setbeamercolor*{block body}{fg=black,bg=black!10}
+\setbeamercolor*{block title alerted}{parent=alerted text,bg=black!15}
+\setbeamercolor*{block title example}{parent=example text,bg=black!15}
+
+\fi
+
+
+
+%-------------------------------------------------------------------------------------
+\title{\color{white} \bf reinforcement learning introduction}
+\author{\color{white} Michal CHOVANEC, PhD}
+
+
+%\setbeamertemplate{footline}[frame number]{}
+\setbeamertemplate{navigation symbols}{}
+
+
+\date[EURP]{}
+\begin{document}
+
+{
+    \usebackgroundtemplate
+    {
+        \vbox to \paperheight{\vfil\hbox to \paperwidth{\hfil
+
+        {\includegraphics[width=5.05in]{../images/rl_square.jpg}}
+
+        \hfil}\vfil}
+    }
+
+
+
+    \begin{frame}
+
+    \centering
+     \colorbox{black}
+     {
+        \begin{minipage}{8cm}
+           {\LARGE \color{white}Reinforcement Learning -\\Introduction} \\
+           {\LARGE \color{white}Michal CHOVANEC, PhD.} \\
+       \end{minipage}
+     }
+
+    \end{frame}
+}
+
+
+
+\begin{frame}{\bf Overview}
+
+  \begin{enumerate}
+      \item Agents, Principle
+      \item Policy Gradients,  Advantage-Actor-Critic
+      \item Practical Example - Lunar Lander
+      \item Cookbook and Literature
+  \end{enumerate}
+
+\end{frame}
+
+
+
+\begin{frame}{\bf Reinforcement learning}
+
+  \begin{columns}
+
+    \begin{column}{0.5\textwidth} 
+      \centering{\includegraphics[scale=0.15]{../images/alpha_go.jpg}}
+    \end{column} 
+    \begin{column}{0.5\textwidth}
+      \centering{\includegraphics[scale=0.25]{../images/eth_drone.png}}
+    \end{column}
+
+  \end{columns}
+
+\end{frame}
+
+
+
+\begin{frame}{\bf Reinforcement learning - principle}
+
+  \centering{\includegraphics[scale=0.8]{../rl_diagrams/rl_common-comparison.png}}
+   
+\end{frame}
+
+
+\begin{frame}{\bf Reinforcement learning - principle}
+
+  \begin{columns}
+
+    \begin{column}{0.5\textwidth}
+      \centering{\includegraphics[scale=0.8]{../rl_diagrams/rl_common-principle.png}}
+    \end{column}
+
+    \begin{column}{0.5\textwidth}
+      \begin{itemize}
+        \item \textbf{\textcolor{red}{active environment interraction}}
+        \item obtain state
+        \item select action
+        \item exectute action
+        \item learn from experiences
+      \end{itemize}
+    \end{column}
+
+  \end{columns}
+
+\end{frame}
+
+
+
+\begin{frame}{\bf Action space}
+
+  \begin{itemize}
+    \item discrete action space \\
+      - keys, keypad
+    \item continuous action space \\
+      - motors, PWMs, steering, torque control
+  \end{itemize}
+
+  \centering{\includegraphics[scale=0.5]{../rl_diagrams/rl_common-actions.png}}
+
+\end{frame}
+
+
+
+\begin{frame}{\bf reinforcement learning - training}
+
+  \centering{\includegraphics[scale=0.75]{../rl_diagrams/rl_common-training_principle.png}}
+
+  \begin{itemize}
+    \item obtain state
+    \item select action
+    \item exectute action
+    \item learn from experiences
+  \end{itemize}
+
+\end{frame}
+
+
+
+
+
+
+\begin{frame}{\bf Policy Gradients,  Advantage-Actor-Critic (A2C)}
+
+  \centering{\includegraphics[scale=0.5]{../rl_diagrams/a2c-actor_critic_basic.png}}
+
+\end{frame}
+
+
+\begin{frame}{\bf Action sampling}
+
+  \centering{\includegraphics[scale=0.3]{../rl_images/a2c_logits_actions.png}}
+
+  \begin{enumerate}
+    \item logits : $$l(s) = f_\theta(s)$$
+    \item probs : $$\pi_{\theta}(a|s)=softmax(l(s))$$
+    \item action sampling : $$a \sim \pi_{\theta}(.|s)$$
+  \end{enumerate}
+
+\end{frame}
+
+\begin{frame}{\bf Actor training}
+
+  \centering{\includegraphics[scale=0.3]{../rl_images/a2c_logits_actions_comparison.png}}
+
+  \begin{enumerate}
+    \item advantages (simplified)  $$A(s, a) = reward - V(s)$$
+    \item policy loss              $$\mathcal{L}_{\theta}(s, a) = -A(s, a)log \pi_{\theta}(a|s)$$
+  \end{enumerate}
+
+\end{frame}
+
+
+\begin{frame}{\bf Critic training}
+
+  \centering{\includegraphics[scale=0.4]{../rl_images/a2c_critic_value_comparison.png}}
+
+  \begin{enumerate}
+    \item critic loss     $$\mathcal{L}_{\Phi}(s)= (V(s) - r)^2$$
+  \end{enumerate}
+
+\end{frame}
+
+
+
+
+\begin{frame}{\bf A2C training}
+
+  \centering{\includegraphics[scale=0.4]{../rl_diagrams/a2c-training_01.png}}
+
+\end{frame}
+
+
+\begin{frame}{\bf A2C training}
+
+  \centering{\includegraphics[scale=0.5]{../rl_diagrams/a2c-training_02.png}}
+
+\end{frame}
+
+
+\begin{frame}{\bf A2C training}
+
+  \centering{\includegraphics[scale=0.35]{../rl_diagrams/a2c-training_03.png}}
+
+\end{frame}
+
+
+
+
+
+\begin{frame}{\bf deep Q learning}
+
+  \begin{columns}
+
+    \begin{column}{0.5\textwidth}
+    \end{column}
+
+    \begin{column}{0.5\textwidth}
+ 
+    \end{column}
+
+  \end{columns}
+
+  \begin{align*}
+    Q(s, a; \theta) = \underset{\textcolor{cyan}{reward}}{R} + \underset{\textcolor{OrangeRed}{discounted\ future\ reward}}{\gamma \max \limits_{a'} Q(s', a'; \theta^-)}
+  \end{align*}
+
+  \begin{align*}
+    \mathcal{L(\theta)} = \left( R + \gamma \max \limits_{a'} Q(s', a'; \theta^-) - Q(s, a; \theta)  \right)^2
+  \end{align*}
+
+\end{frame}
+
+
+
+\begin{frame}{\bf Q\&A}
+
+
+\url{michal.nand@gmail.com}
+
+\url{https://github.com/michalnand/lectures/}
+
+ 
+\end{frame}
+
+
+\end{document}
