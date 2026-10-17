@@ -64,3 +64,9 @@ _minted-*
 *snm
 .synctex(busy)
 *.run.xml
+
+# trained models
+*.pt
+
+# video
+*.mp4

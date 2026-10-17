@@ -53,7 +53,14 @@ class A2CAgent:
  
         # envpool wants a numpy array of actions, one per env
         return actions.cpu().numpy()
- 
+
+    def save(self, result_path):
+        torch.save(self.model.state_dict(), result_path + "/model_weights.pt")
+        torch.save(self.model, result_path + "/model.pt")
+
+    def load(self, result_path):
+        self.model.load_state_dict(torch.load(result_path + "/model_weights.pt", weights_only=True))
+
     def _sample_action(self, logits):
         # convert raw logits to probs
         probs = torch.softmax(logits, dim=-1)          # (n_envs, n_actions)
