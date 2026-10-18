@@ -533,11 +533,11 @@
   \textbf{evaluation of the policy}
 
   \begin{itemize}
+    \item \textbf{episodic  score}
     \item \textbf{gates passed:} mean number of successful crossings
-    \item \textbf{completion ratio:}
-      gates passed / gates in course
+    \item \textbf{flight speed and g-force:} mean and maximum speed
+    \item \textbf{completion ratio:} gates passed / gates in course
     \item \textbf{crash rate:} fraction of episodes ending in a crash
-    \item \textbf{flight speed:} mean and maximum speed
     \item \textbf{generalization:} performance on unseen gate layouts
   \end{itemize}
 
@@ -548,6 +548,20 @@
 
 
 
+\begin{frame}{\bf Episodic score}
+  \centering
+  \includegraphics[scale=0.35]{../rl_drones_results/episode_reward.png}
+  \includegraphics[scale=0.35]{../rl_drones_results/gates_passed_ratio.png}
+
+\end{frame}
+
+
+\begin{frame}{\bf Speed}
+  \centering
+  \includegraphics[scale=0.35]{../rl_drones_results/speed_mean.png}
+  \includegraphics[scale=0.35]{../rl_drones_results/g_force_mean.png}
+
+\end{frame}
 
 \begin{frame}{\bf Policy Gradients, Advantage-Actor-Critic (A2C)}
 
