@@ -355,26 +355,25 @@
       $\sin(\phi),\cos(\phi),\sin(\theta),\cos(\theta)$
     \item \textbf{angular velocity (3):}
       $\omega_x,\omega_y,\omega_z$
-    \item \textbf{linear velocity (3):}
-      forward, left and vertical velocity
-    \item \textbf{height (1):}
-      distance above the floor
+    \item \textbf{linear velocity (2):}
+      velocity over ground
+    \item \textbf{height (2):}
+      distance above the floor and velocity
     \item \textbf{upcoming gates (36):}
       four 3D inner corners for each of three gates
+    \item \textbf{nearest gate (12):}
+      collision avoidance 
   \end{itemize}
 
   \begin{block}{observation vector}
     \[
-      s_t \in \mathbb{R}^{47},
-      \qquad 11 + 3\cdot 12 = 47
+      s_t \in \mathbb{R}^{59},
+      \qquad 11 + 3\cdot 12 + 12 = 59
     \]
     the observation is drone-centric: no absolute world
-    position or world yaw is provided.
+    position or world yaw is provided. 
   \end{block}
 
-  \small
-  the 3 gate blocks represent the next gate and two
-  subsequent gates when \texttt{num\_future\_gates=2}.
 
 \end{frame}
 
@@ -475,7 +474,7 @@
 \end{frame}
 
 
-
+ 
 
 
 \begin{frame}{\bf Agent selection - PPO}
@@ -541,26 +540,21 @@
     \item \textbf{generalization:} performance on unseen gate layouts
   \end{itemize}
 
-  TODO : Insert training curves + EDA
-
 
 \end{frame}
 
 
 
-\begin{frame}{\bf Episodic score}
+\begin{frame}{\bf Passed gates}
   \centering
-  \includegraphics[scale=0.35]{../rl_drones_results/episode_reward.png}
-  \includegraphics[scale=0.35]{../rl_drones_results/gates_passed_ratio.png}
+  \includegraphics[scale=0.5]{../rl_drones_results/env_success_rate.png}
 
 \end{frame}
 
 
-\begin{frame}{\bf Speed}
+\begin{frame}{\bf Speed and forces}
   \centering
-  \includegraphics[scale=0.35]{../rl_drones_results/speed_mean.png}
-  \includegraphics[scale=0.35]{../rl_drones_results/g_force_mean.png}
-
+  \includegraphics[scale=0.5]{../rl_drones_results/env_speed_force.png}
 \end{frame}
 
 \begin{frame}{\bf Policy Gradients, Advantage-Actor-Critic (A2C)}

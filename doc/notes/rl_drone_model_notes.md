@@ -9,7 +9,7 @@ One MLP body feeds three linear heads: action mean, action variance and state va
 | Hidden layers | 2 x `num_hidden` (default 256), SiLU |
 | Policy | diagonal Gaussian, mean in [-1, 1], variance > 0 |
 | Critic | scalar state value V(s) |
-| Parameters | 80 393 (47 inputs, 4 actions, 256 hidden) |
+| Parameters | 83 465 (59 inputs, 4 actions, 256 hidden) |
 
 ---
 
@@ -24,14 +24,14 @@ x (input_shape[0])
      |-> critic    : Linear(256, 1)              -> value    (1)
 ```
 
-| Layer | Shape | Activation | Init | Parameters (47 -> 4) |
+| Layer | Shape | Activation | Init | Parameters (59 -> 4) |
 |---|---|---|---|---|
-| `lin_0` | input -> 256 | SiLU | orthogonal, gain 0.5, bias 0 | 12 288 |
+| `lin_0` | input -> 256 | SiLU | orthogonal, gain 0.5, bias 0 | 15 360 |
 | `lin_1` | 256 -> 256 | SiLU | orthogonal, gain 0.5, bias 0 | 65 792 |
 | `actor_mu` | 256 -> A | Tanh | orthogonal, gain `actor_mu_gain` (0.01), bias 0 | 1 028 |
 | `actor_var` | 256 -> A | Softplus | orthogonal, gain `actor_var_gain` (0.01), bias 0 | 1 028 |
 | `critic` | 256 -> 1 | none | orthogonal, gain `critic_gain` (0.01), bias 0 | 257 |
-| **Total** | | | | **80 393** |
+| **Total** | | | | **83 465** |
 
 ---
 
@@ -83,7 +83,7 @@ The environment clips them, and the log-probability is computed on the unclipped
 
 ## Initial behaviour
 
-Measured at initialization (47 inputs, 4 actions, inputs ~ N(0, 2^2)):
+Measured at initialization (59 inputs, 4 actions, inputs ~ N(0, 2^2)):
 
 | Output | Value at init | Why |
 |---|---|---|
