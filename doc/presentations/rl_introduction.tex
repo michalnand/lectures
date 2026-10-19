@@ -174,6 +174,64 @@
 
 
 
+\begin{frame}{AlphaGo: Reinforcement Learning Beyond Human Play}
+    \begin{columns}[T]
+        \column{0.56\textwidth}
+        \begin{itemize}
+            \item in 2016, AlphaGo defeated world champion Lee Sedol
+                  by \textbf{4--1}.
+            \item combined deep neural networks, tree search,
+                  and reinforcement learning.
+            \item through self-play, it learned strategies that
+                  went beyond simply imitating human games.
+        \end{itemize}
+
+        \vspace{0.3cm}
+        \textbf{Why it matters:}
+        RL helped discover effective strategies in a vast
+        decision space.
+
+        \column{0.40\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../images/alpha_go.jpg}
+    \end{columns}
+
+    \vspace{0.2cm}
+    {\tiny source: DeepMind, AlphaGo research project.}
+\end{frame}
+
+
+
+\begin{frame}{Autonomous Drone Racing: Beating Human Champions}
+    \begin{columns}[T]
+        \column{0.56\textwidth}
+        \begin{itemize}
+            \item deep reinforcement learning system learned
+                  to race a physical drone through gates.
+            \item in head-to-head races, it won \textbf{15 out of 25}
+                  against three champion-level human pilots.
+            \item its fastest race was \textbf{0.5 seconds faster}
+                  than the best human race time in the study.
+        \end{itemize}
+
+        \vspace{0.3cm}
+        \textbf{Why it matters:}
+        RL can learn fast, reactive control in the physical world,
+        not just in games or simulations.
+
+        \column{0.40\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../images/eth_drone.png}
+    \end{columns}
+
+    \vspace{0.2cm}
+    {\tiny source: Kaufmann et al., Nature, 2023,
+    ``Champion-level drone racing using deep reinforcement learning''.}
+\end{frame}
+
+
+
+
 \begin{frame}{\bf Reinforcement learning - principle}
 
   \centering{\includegraphics[scale=0.8]{../rl_diagrams/rl_common-comparison.png}}
@@ -819,36 +877,36 @@
 
 
 
-\begin{frame}{\bf The main challenges in reinforcement learning}
+\begin{frame}{\bf main challenges in reinforcement learning}
   \small
   \begin{itemize}
     \item \textbf{\textcolor{cyan}{Sample efficiency}}
       \begin{itemize}
-        \item Learning may require millions of environment interactions.
-        \item Real robots are slow, expensive, and can be damaged.
+        \item learning may require millions of environment interactions
+        \item real robots are slow, expensive, and can be damaged
       \end{itemize}
     \vspace{0.12cm}
     \item \textbf{\textcolor{cyan}{Exploration and sparse rewards}}
       \begin{itemize}
-        \item How can an agent discover useful behaviour when success is rare?
-        \item Poor exploration can leave the policy stuck in local solutions.
+        \item how can an agent discover useful behaviour when success is rare?
+        \item poor exploration can leave the policy stuck in local solutions
       \end{itemize}
     \vspace{0.12cm}
     \item \textbf{\textcolor{cyan}{Reward design and alignment}}
       \begin{itemize}
-        \item A proxy reward may be optimized without achieving the real goal.
-        \item Speed, safety, energy, and task completion may conflict.
+        \item proxy reward may be optimized without achieving the real goal
+        \item speed, safety, energy, and task completion may conflict
       \end{itemize}
     \vspace{0.12cm}
     \item \textbf{\textcolor{cyan}{Generalization and robustness}}
       \begin{itemize}
-        \item A policy that succeeds in training may fail in new conditions.
-        \item Sensor noise, unseen layouts, and changed dynamics matter.
+        \item policy that succeeds in training may fail in new conditions
+        \item sensor noise, unseen layouts, and changed dynamics matter
       \end{itemize}
   \end{itemize}
   \vspace{0.1cm}
   \begin{alertblock}{Core question}
-    Can we learn behaviour that is efficient, reliable, and useful beyond the training environment?
+    can we learn behaviour that is efficient, reliable, and useful beyond the training environment?
   \end{alertblock}
 \end{frame}
 
@@ -864,23 +922,23 @@
       \includegraphics[width=\linewidth]{../images/montezuma.png}
       \vspace{0.1cm}
       \scriptsize
-      Montezuma's Revenge: platforms, ladders, hazards, and keys.
+      Montezuma's Revenge: platforms, ladders, hazards, and keys
     \end{column}
     \begin{column}{0.48\textwidth}
       \tiny
       \textbf{The problem}
       \begin{itemize}
-        \item Rewards are sparse: progress may produce no immediate feedback.
-        \item The agent must discover unfamiliar states and long action sequences.
+        \item rewards are sparse: progress may produce no immediate feedback
+        \item the agent must discover unfamiliar states and long action sequences
       \end{itemize}
       \textbf{Self-supervised Network Distillation (SND)}
       \begin{itemize}
-        \item A predictor learns to match features from a target network.
-        \item Prediction error provides an intrinsic novelty signal.
-        \item The agent is encouraged to visit states it does not yet represent well.
+        \item predictor learns to match features from a target network
+        \item prediction error provides an intrinsic novelty signal
+        \item the agent is encouraged to visit states it does not yet represent well
       \end{itemize}
       \begin{block}{Key idea}
-        Use novelty-driven exploration to discover rewarding behavior when the game itself provides little feedback.
+        use novelty-driven exploration to discover rewarding behavior when the game itself provides little feedback
       \end{block}
       \vspace{0.05cm}
       \scriptsize
@@ -985,6 +1043,154 @@
   objective, surrogate loss and empirical comparisons.
 
 \end{frame}
+
+
+
+
+\begin{frame}{\bf policy gradient: learning from samples}
+\begin{itemize}
+    \item our goal is to \textbf{\textcolor{cyan}{maximize}} the expected return:
+    \[
+        J(\theta)=\mathbb{E}_{\tau\sim\pi_\theta}[R(\tau)].
+    \]
+    \item in practice, \textbf{\textcolor{red}{we do not know the exact distribution}} of all possible trajectories
+    \item instead, we collect trajectories by running the policy and use a \textbf{Monte Carlo} estimate:
+    \[
+        J(\theta)\approx \frac{1}{N}\sum_{i=1}^{N}R(\tau_i).
+    \]
+    \item to improve the policy, we need the gradient $\nabla_\theta J(\theta)$
+\end{itemize}
+\end{frame}
+
+\begin{frame}{\bf policy gradient: the log trick}
+we only  \textbf{have sampled trajectories}, so we want a gradient we can estimate from those samples
+
+\[
+\begin{aligned}
+\nabla_\theta J(\theta)
+&= \nabla_\theta \mathbb{E}_{\tau\sim\pi_\theta}[R(\tau)]\\
+&= \mathbb{E}_{\tau\sim\pi_\theta}
+   \left[R(\tau)\nabla_\theta\log P(\tau;\theta)\right]
+\end{aligned}
+\]
+
+\begin{itemize}
+    \item \textbf{\textcolor{cyan}{the key identity is}}
+    \[
+        \nabla_\theta P(\tau;\theta)
+        =P(\tau;\theta)\nabla_\theta\log P(\tau;\theta)
+    \]
+    \item it turns the gradient of a probability into a log-probability gradient that we can evaluate for sampled trajectories
+    \item since the environment's dynamics do not depend on $\theta$,
+    \[
+        \nabla_\theta\log P(\tau;\theta)
+        =\sum_t\nabla_\theta\log\pi_\theta(a_t\mid s_t)
+    \]
+\end{itemize}
+
+\[
+\nabla_\theta J(\theta)\approx
+\frac{1}{N}\sum_{i=1}^{N}R(\tau_i)
+\sum_t\nabla_\theta\log\pi_\theta(a_{i,t}\mid s_{i,t})
+\]
+\end{frame}
+
+
+
+
+\begin{frame}{REINFORCE: learning from discounted returns}
+    for each time step, define the \textbf{\textcolor{cyan}{discounted return}}:
+    \[
+        G_t = \sum_{k=0}^{T-t-1} \gamma^k r_{t+k+1}
+    \]
+
+    \vspace{-0.1cm}
+    return measures the rewards collected after taking action
+    $a_t$ in state $s_t$, with future rewards discounted by $\gamma$.
+
+    \vspace{0.2cm}
+    REINFORCE gradient estimator is
+    \[
+        \hat{g}
+        =
+        \frac{1}{N}
+        \sum_{i=1}^{N}
+        \sum_{t=0}^{T_i-1}
+        G_t^{(i)}
+        \nabla_\theta
+        \log \pi_\theta(a_t^{(i)} \mid s_t^{(i)}).
+    \]
+
+    \begin{itemize}
+        \item collect trajectories using the current policy
+        \item compute the discounted return $G_t$ for each action
+        \item increase the probability of actions followed by high returns;
+              decrease it for actions followed by low returns
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}{REINFORCE: the problem of high variance}
+    return $G_t$ is a \textbf{\textcolor{red}{noisy estimate of how good an action was}}
+
+    \vspace{0.2cm}
+    \begin{itemize}
+        \item \textbf{different outcomes:}
+              similar states and actions can lead to very different
+              future rewards
+        \item \textbf{delayed rewards:}
+              an outcome may depend on many later actions
+        \item \textbf{noisy updates:}
+              different sampled trajectories can suggest very different
+              parameter updates
+    \end{itemize}
+
+    
+    \vspace{0.2cm}
+    \textbf{consequence:} REINFORCE gives an unbiased gradient estimate,
+    but its high variance can make learning slow and unstable
+\end{frame}
+
+
+\begin{frame}{Reducing variance: critic and advantages}
+    critic estimates how much \textbf{\textcolor{cyan}{future reward we expect from a state}}
+    under the current policy :
+    \[
+        V^\pi(s_t)
+        =
+        \mathbb{E}_\pi[G_t \mid s_t].
+    \]
+
+
+    instead of using the return directly, we compute the \textbf{\textcolor{red}{advantage}}:
+    \[
+        \hat{A}_t = G_t - V_\phi(s_t).
+    \]
+
+    \vspace{-0.1cm}
+    actor update becomes
+    \[
+        \hat{g}
+        =
+        \sum_t
+        \hat{A}_t
+        \nabla_\theta
+        \log \pi_\theta(a_t \mid s_t).
+    \]
+
+
+    \begin{itemize}
+        \item $\hat{A}_t > 0$: \textbf{\textcolor{cyan}{the outcome was better than expected}};
+              increase the action's probability
+        \item $\hat{A}_t < 0$: \textbf{\textcolor{red}{the outcome was worse than expected}};
+              decrease the action's probability
+        \item $\hat{A}_t \approx 0$: \textbf{\textcolor{green}{the outcome was close to expectation}};
+              make little change.
+    \end{itemize}
+
+    
+\end{frame}
+
 
 
 
