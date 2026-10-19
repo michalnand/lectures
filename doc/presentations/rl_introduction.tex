@@ -151,6 +151,29 @@
 
 
 
+\begin{frame}{\bf Reinforcement learning - begining, 2013}
+
+  \begin{columns}
+
+    \begin{column}{0.5\textwidth} 
+      \centering{\includegraphics[scale=0.4]{../images/breakout.png}}
+    \end{column} 
+    \begin{column}{0.5\textwidth}
+      \begin{itemize}
+        \item \textbf{Playing Atari with Deep Reinforcement Learning}
+        \item human level gameplay from screen osbservation
+        \item Deep Q networks (DQN)
+        \item tiny model : \\ 8x8x16 - 4x4x16 - 256 - output
+      \end{itemize}
+      
+    \end{column}
+
+  \end{columns}
+
+\end{frame}
+
+
+
 \begin{frame}{\bf Reinforcement learning - principle}
 
   \centering{\includegraphics[scale=0.8]{../rl_diagrams/rl_common-comparison.png}}
@@ -796,6 +819,76 @@
 
 
 
+\begin{frame}{\bf The main challenges in reinforcement learning}
+  \small
+  \begin{itemize}
+    \item \textbf{\textcolor{cyan}{Sample efficiency}}
+      \begin{itemize}
+        \item Learning may require millions of environment interactions.
+        \item Real robots are slow, expensive, and can be damaged.
+      \end{itemize}
+    \vspace{0.12cm}
+    \item \textbf{\textcolor{cyan}{Exploration and sparse rewards}}
+      \begin{itemize}
+        \item How can an agent discover useful behaviour when success is rare?
+        \item Poor exploration can leave the policy stuck in local solutions.
+      \end{itemize}
+    \vspace{0.12cm}
+    \item \textbf{\textcolor{cyan}{Reward design and alignment}}
+      \begin{itemize}
+        \item A proxy reward may be optimized without achieving the real goal.
+        \item Speed, safety, energy, and task completion may conflict.
+      \end{itemize}
+    \vspace{0.12cm}
+    \item \textbf{\textcolor{cyan}{Generalization and robustness}}
+      \begin{itemize}
+        \item A policy that succeeds in training may fail in new conditions.
+        \item Sensor noise, unseen layouts, and changed dynamics matter.
+      \end{itemize}
+  \end{itemize}
+  \vspace{0.1cm}
+  \begin{alertblock}{Core question}
+    Can we learn behaviour that is efficient, reliable, and useful beyond the training environment?
+  \end{alertblock}
+\end{frame}
+
+
+
+
+\begin{frame}{\bf Montezuma's Revenge: exploration with self-supervised distillation}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.48\textwidth}
+      \centering
+      % Replace with a local screenshot if desired:
+      % \includegraphics[width=\linewidth]{../images/montezuma_revenge.png}
+      \includegraphics[width=\linewidth]{../images/montezuma.png}
+      \vspace{0.1cm}
+      \scriptsize
+      Montezuma's Revenge: platforms, ladders, hazards, and keys.
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \tiny
+      \textbf{The problem}
+      \begin{itemize}
+        \item Rewards are sparse: progress may produce no immediate feedback.
+        \item The agent must discover unfamiliar states and long action sequences.
+      \end{itemize}
+      \textbf{Self-supervised Network Distillation (SND)}
+      \begin{itemize}
+        \item A predictor learns to match features from a target network.
+        \item Prediction error provides an intrinsic novelty signal.
+        \item The agent is encouraged to visit states it does not yet represent well.
+      \end{itemize}
+      \begin{block}{Key idea}
+        Use novelty-driven exploration to discover rewarding behavior when the game itself provides little feedback.
+      \end{block}
+      \vspace{0.05cm}
+      \scriptsize
+      M. Pecháč, M. Chovanec, I. Farkaš, \emph{Self-supervised network distillation: an effective approach to exploration in sparse reward environments}, Neurocomputing, 2024.
+      \href{https://doi.org/10.1016/j.neucom.2024.128033}{doi:10.1016/j.neucom.2024.128033}
+    \end{column}
+  \end{columns}
+\end{frame}
 
 
 \begin{frame}{\bf Literature - three papers to remember}
