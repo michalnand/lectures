@@ -232,6 +232,88 @@
 
 
 
+
+\begin{frame}{\b real-world impact}
+
+\small
+
+\begin{columns}[T,onlytextwidth]
+
+  \begin{column}{0.32\textwidth}
+
+    \centering
+    {\Large \textcolor{cyan}{\bf robotics}}
+
+    \vspace{0.2cm}
+
+    \includegraphics[width=\linewidth]
+      {../images/drone_racing.png}
+
+    \vspace{0.15cm}
+
+    \textbf{Learning to fly}
+
+    \begin{itemize}
+      \item learn high-speed control through interaction
+      \item transfer policies from simulation to a real drone
+    \end{itemize}
+
+
+  \end{column}
+
+  \begin{column}{0.32\textwidth}
+
+    \centering
+    {\Large \textcolor{green}{\bf energetics}}
+
+    \vspace{0.2cm}
+
+    \includegraphics[width=\linewidth]
+      {../images/data_center.png}
+
+    \vspace{0.15cm}
+
+    \textbf{optimizing cooling}
+
+    \begin{itemize}
+      \item observe temperatures and system conditions
+      \item choose control settings to reduce energy use
+    \end{itemize}
+
+    
+
+  \end{column}
+
+  \begin{column}{0.32\textwidth}
+
+    \centering
+    {\Large \textcolor{orange}{\bf transport}}
+
+    \vspace{0.2cm}
+
+    \includegraphics[width=\linewidth]
+      {../images/traffic.png}
+
+    \vspace{0.15cm}
+
+    \textbf{adaptive traffic lights}
+
+    \begin{itemize}
+      \item observe queues and traffic flow
+      \item adapt signal timing as conditions change
+    \end{itemize}
+
+   
+
+  \end{column}
+
+\end{columns}
+
+\end{frame}
+
+
+
+
 \begin{frame}{\bf Reinforcement learning - principle}
 
   \centering{\includegraphics[scale=0.8]{../rl_diagrams/rl_common-comparison.png}}
@@ -877,6 +959,60 @@
 
 
 
+\begin{frame}{when to use reinforcement learning}
+\tiny
+\centering
+\centering
+
+\hspace*{-0.8cm}%
+\begin{tabular}{|p{3.3cm}|p{2.8cm}|p{4.5cm}|}
+\hline
+\centering\textbf{situation} &
+\centering\textbf{strong starting point} &
+\centering\arraybackslash\textbf{why} \\
+\hline
+
+simple, well-understood dynamics; regulate around a setpoint
+& PID / LQR
+& simple, fast, analyzable \\
+\hline
+
+known model, constraints, and meaningful cost function
+& MPC
+& explicitly optimizes future actions while handling constraints \\
+\hline
+
+known dynamics, but a reference trajectory must be found
+& planning + control / MPC
+& planning finds the route or trajectory; control tracks it \\
+\hline
+
+unknown or hard-to-model dynamics, but a simulator or lots of interaction data is available
+& \textbf{RL, or learning-based control}
+& can learn behavior without requiring a perfect analytical model \\
+\hline
+
+complex behavior with delayed consequences, many interacting decisions, or difficult-to-design heuristics
+& \textbf{RL may be worthwhile}
+& can optimize long-term return through experience \\
+\hline
+
+safety constraints are strict
+& robust/safety-certified control first
+& guarantees can be established under explicit assumptions \\
+\hline
+
+known physics, but the model or cost is imperfect
+& hybrid approach
+& learn the uncertain parts or tune the controller while retaining model-based structure \\
+\hline
+\end{tabular}
+
+\end{frame}
+
+
+
+
 \begin{frame}{\bf main challenges in reinforcement learning}
   \small
   \begin{itemize}
@@ -1047,90 +1183,159 @@
 
 
 
-\begin{frame}{\bf policy gradient: learning from samples}
+\begin{frame}{\bf policy gradient: log trick}
+
 \begin{itemize}
-    \item our goal is to \textbf{\textcolor{cyan}{maximize}} the expected return:
-    \[
-        J(\theta)=\mathbb{E}_{\tau\sim\pi_\theta}[R(\tau)].
-    \]
-    \item in practice, \textbf{\textcolor{red}{we do not know the exact distribution}} of all possible trajectories
-    \item instead, we collect trajectories by running the policy and use a \textbf{Monte Carlo} estimate:
-    \[
-        J(\theta)\approx \frac{1}{N}\sum_{i=1}^{N}R(\tau_i).
-    \]
-    \item to improve the policy, we need the gradient $\nabla_\theta J(\theta)$
+  \item \textbf{\textcolor{cyan}{goal}} : find parameters $\theta$ that maximize
+  the expected reward:
+  \[
+    J(\theta)=\mathbb{E}_{\tau\sim\pi_\theta}[R(\tau)].
+  \]
+
+  \item suppose the agent chooses an action $a$ with probability
+  \[
+    p_\theta=\pi_\theta(a\mid s).
+  \]
+
+  \item we want to know how this probability changes when
+  we change the policy parameters.
 \end{itemize}
+
+\begin{block}{useful mathematical identity}
+  \[
+    \boxed{
+      \nabla_\theta p_\theta
+      =p_\theta\nabla_\theta\log p_\theta
+    }
+  \]
+  this follows directly from the chain rule:
+  \[
+    \nabla_\theta\log p_\theta
+    =\frac{1}{p_\theta}\nabla_\theta p_\theta.
+  \]
+\end{block}
+
+\small
+\textbf{\textcolor{red}{logarithm does not change the mathematics}}; it gives us
+a more convenient way to express the gradient.
+
 \end{frame}
 
-\begin{frame}{\bf policy gradient: the log trick}
-we only  \textbf{have sampled trajectories}, so we want a gradient we can estimate from those samples
+
+\begin{frame}{\bf why is the log trick so useful?}
+
+suppose a trajectory contains three actions, whose probabilities
+under the policy are $p_1,p_2,p_3$.
 
 \[
+  P_\theta(\tau)=p_1p_2p_3
+\]
+
+differentiating this product directly gives
+\[
 \begin{aligned}
-\nabla_\theta J(\theta)
-&= \nabla_\theta \mathbb{E}_{\tau\sim\pi_\theta}[R(\tau)]\\
-&= \mathbb{E}_{\tau\sim\pi_\theta}
-   \left[R(\tau)\nabla_\theta\log P(\tau;\theta)\right]
+\nabla_\theta P_\theta(\tau)
+={}&p_2p_3\nabla_\theta p_1\\
+ &+p_1p_3\nabla_\theta p_2\\
+ &+p_1p_2\nabla_\theta p_3.
 \end{aligned}
 \]
 
-\begin{itemize}
-    \item \textbf{\textcolor{cyan}{the key identity is}}
-    \[
-        \nabla_\theta P(\tau;\theta)
-        =P(\tau;\theta)\nabla_\theta\log P(\tau;\theta)
-    \]
-    \item it turns the gradient of a probability into a log-probability gradient that we can evaluate for sampled trajectories
-    \item since the environment's dynamics do not depend on $\theta$,
-    \[
-        \nabla_\theta\log P(\tau;\theta)
-        =\sum_t\nabla_\theta\log\pi_\theta(a_t\mid s_t)
-    \]
-\end{itemize}
-
+\textbf{\textcolor{cyan}{instead, take the logarithm}}:
 \[
-\nabla_\theta J(\theta)\approx
-\frac{1}{N}\sum_{i=1}^{N}R(\tau_i)
-\sum_t\nabla_\theta\log\pi_\theta(a_{i,t}\mid s_{i,t})
+  \log P_\theta(\tau)
+  =\log p_1+\log p_2+\log p_3.
 \]
+
+using our identity,
+\[
+  \boxed{
+    \nabla_\theta P_\theta(\tau)
+    =P_\theta(\tau)
+      \sum_{t=1}^{3}\nabla_\theta\log p_t
+  }
+\]
+
+\end{frame}
+
+
+\begin{frame}{\bf from the log trick to REINFORCE}
+
+our objective is to maximize expected trajectory reward:
+\[
+  J(\theta)=\sum_\tau P_\theta(\tau)R(\tau).
+\]
+
+assuming the environment dynamics do not depend on $\theta$,
+differentiate:
+\[
+\begin{aligned}
+\nabla_\theta J(\theta)
+  &=\sum_\tau R(\tau)\nabla_\theta P_\theta(\tau)\\
+  &=\sum_\tau P_\theta(\tau)R(\tau)
+       \nabla_\theta\log P_\theta(\tau).
+\end{aligned}
+\]
+
+writing the sum as an expectation gives
+\[
+  \nabla_\theta J(\theta)
+  =\mathbb{E}_{\tau\sim\pi_\theta}
+    \left[
+      R(\tau)\nabla_\theta\log P_\theta(\tau)
+    \right].
+\]
+
+since the trajectory probability is a product of action
+probabilities, its log-gradient is a sum:
+\[
+  \boxed{
+    \nabla_\theta J(\theta)
+    =\mathbb{E}\left[
+      R(\tau)\sum_t
+      \nabla_\theta\log\pi_\theta(a_t\mid s_t)
+    \right]
+  }
+\]
+
+\end{frame}
+
+
+
+\begin{frame}{\bf actor training: from REINFORCE to A2C}
+
+\begin{enumerate}
+  \item \textbf{advantage:}
+    \[
+      A(s,a)\approx R-V_\phi(s)
+    \]
+
+  \item \textbf{policy loss:}
+    \[
+      \mathcal{L}_\theta
+      =-A(s,a)\log\pi_\theta(a\mid s)
+    \]
+\end{enumerate}
+
+\small
+
+\textbf{\textcolor{red}{positive advantage}} increases the probability of the selected
+action; \textbf{\textcolor{cyan}{negative advantage}} decreases it.
+
+the critic provides a \textbf{baseline that reduces the variance} of
+the policy-gradient estimate, in practice, the return estimate
+may combine multiple rewards with bootstrapping
+
 \end{frame}
 
 
 
 
-\begin{frame}{REINFORCE: learning from discounted returns}
-    for each time step, define the \textbf{\textcolor{cyan}{discounted return}}:
-    \[
-        G_t = \sum_{k=0}^{T-t-1} \gamma^k r_{t+k+1}
-    \]
-
-    \vspace{-0.1cm}
-    return measures the rewards collected after taking action
-    $a_t$ in state $s_t$, with future rewards discounted by $\gamma$.
-
-    \vspace{0.2cm}
-    REINFORCE gradient estimator is
-    \[
-        \hat{g}
-        =
-        \frac{1}{N}
-        \sum_{i=1}^{N}
-        \sum_{t=0}^{T_i-1}
-        G_t^{(i)}
-        \nabla_\theta
-        \log \pi_\theta(a_t^{(i)} \mid s_t^{(i)}).
-    \]
-
-    \begin{itemize}
-        \item collect trajectories using the current policy
-        \item compute the discounted return $G_t$ for each action
-        \item increase the probability of actions followed by high returns;
-              decrease it for actions followed by low returns
-    \end{itemize}
-\end{frame}
 
 
-\begin{frame}{REINFORCE: the problem of high variance}
+
+
+\begin{frame}{solving the problem of high variance}
     return $G_t$ is a \textbf{\textcolor{red}{noisy estimate of how good an action was}}
 
     \vspace{0.2cm}
@@ -1152,7 +1357,7 @@ we only  \textbf{have sampled trajectories}, so we want a gradient we can estima
 \end{frame}
 
 
-\begin{frame}{Reducing variance: critic and advantages}
+\begin{frame}{reducing variance: critic and advantages}
     critic estimates how much \textbf{\textcolor{cyan}{future reward we expect from a state}}
     under the current policy :
     \[
